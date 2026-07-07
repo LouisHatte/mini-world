@@ -1,0 +1,7 @@
+__pycache__/
+
+*.pyc
+*.pyo
+*.pyd
+
+mini_world.json
