@@ -38,6 +38,18 @@ func (currency *Currency) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (asset *Asset) UnmarshalJSON(data []byte) error {
+	type alias Asset
+
+	defaults := NewAsset("", "", "", 0)
+	if err := json.Unmarshal(data, (*alias)(defaults)); err != nil {
+		return err
+	}
+
+	*asset = *defaults
+	return nil
+}
+
 func (centralBank *CentralBank) UnmarshalJSON(data []byte) error {
 	type alias CentralBank
 

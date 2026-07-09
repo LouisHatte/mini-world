@@ -8,6 +8,7 @@ type World struct {
 	Humans       map[string]*Human       `json:"humans"`
 	Accounts     map[string]*Account     `json:"accounts"`
 	Currencies   map[string]*Currency    `json:"currencies"`
+	Assets       map[string]*Asset       `json:"assets"`
 
 	CustomerLoans map[string]map[string]any `json:"customer_loans"`
 	Holds         map[string]map[string]any `json:"holds"`
@@ -40,6 +41,13 @@ type CentralBank struct {
 }
 
 type Currency struct{}
+
+type Asset struct {
+	ID             string `json:"id"`
+	OwnerHumanID   string `json:"owner_human_id"`
+	Currency       string `json:"currency"`
+	EstimatedValue int    `json:"estimated_value"`
+}
 
 type Bank struct {
 	ID                    string         `json:"id"`

@@ -9,6 +9,7 @@ func New() *World {
 		Humans:       map[string]*Human{},
 		Accounts:     map[string]*Account{},
 		Currencies:   map[string]*Currency{},
+		Assets:       map[string]*Asset{},
 
 		CustomerLoans: map[string]map[string]any{},
 		Holds:         map[string]map[string]any{},
@@ -32,6 +33,15 @@ func New() *World {
 
 func NewCurrency() *Currency {
 	return &Currency{}
+}
+
+func NewAsset(id string, ownerHumanID string, currency string, estimatedValue int) *Asset {
+	return &Asset{
+		ID:             id,
+		OwnerHumanID:   ownerHumanID,
+		Currency:       currency,
+		EstimatedValue: estimatedValue,
+	}
 }
 
 func NewCentralBank(id string, currency string) *CentralBank {

@@ -16,6 +16,7 @@ Run the milestone scenario:
 ```sh
 sh scripts/01.setup.sh
 sh scripts/02.cash.sh
+sh scripts/03.assets.sh
 ```
 
 ## Commands
@@ -50,6 +51,12 @@ return-cash             Commercial bank returns physical cash to central bank an
 
 move-cash               Physical cash transport between commercial banks, without reserve settlement
 sell-cash               One commercial bank sells physical cash to another commercial bank, settled with reserves
+
+# ---------------------------------------- ASSETS ----------------------------------------
+
+register-asset          Setup/admin: register an already existing asset
+buy-asset-cash          Human buys an existing asset with physical cash
+revalue-asset           Change estimated asset value
 ```
 
 ## TODO
