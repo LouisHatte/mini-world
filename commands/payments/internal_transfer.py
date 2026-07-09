@@ -1,23 +1,7 @@
 from argparse import Namespace, _SubParsersAction
 
+from commands.common import assert_account_can_debit, find_account_id
 from world import load_world, save_world
-
-
-def find_account_id(
-    world: dict, human_id: str, bank_id: str, currency: str
-) -> str | None:
-    for account_id in world["humans"][human_id]["bank_accounts"]:
-        account = world["accounts"][account_id]
-
-        if (
-            account["owner_human_id"] == human_id
-            and account["bank_id"] == bank_id
-            and account["currency"] == currency
-            and account["status"] == "ACTIVE"
-        ):
-            return account_id
-
-    return None
 
 
 def run(args: Namespace) -> None:
@@ -64,11 +48,10 @@ def run(args: Namespace) -> None:
     sender_account = world["accounts"][sender_account_id]
     recipient_account = world["accounts"][recipient_account_id]
 
-    if sender_account["booked_balance"] < amount:
-        print(
-            f"Not enough money in {sender_human_id}'s account. "
-            f"Available: {sender_account['booked_balance']} {currency}"
-        )
+    debit_error = assert_account_can_debit(world, sender_account, amount)
+
+    if debit_error is not None:
+        print(debit_error)
         return
 
     # Bank 1 reduces its debt to Alice.

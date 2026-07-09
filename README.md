@@ -44,18 +44,20 @@ create-human            Create Alice/Bob
 open-account            Open a bank deposit account
 
 # ---------------------------------------- CASH ----------------------------------------
-issue-cash              Create physical cash
-destroy-cash            Central bank removes damaged cash from circulation
+issue-cash              Create physical cash in a central bank vault
+destroy-cash            Central bank removes damaged physical cash from circulation
 
-seed-cash               Give initial existing cash to a human
-deposit-cash            Human deposits cash into a bank
-withdraw-cash           Converts bank deposit into physical cash
-transfer-cash           A human physically gives cash to another human
+seed-cash               Give initial existing cash from central bank to a human
 
-supply-cash             Convert bank reserves into physical cash
-return-cash             Bank returns physical cash to central bank
+deposit-cash            Human deposits physical cash into a commercial bank
+withdraw-cash           Human converts bank deposit into physical cash
+transfer-cash           Human physically gives cash to another human
 
-move-cash               Physical cash transport between banks
+supply-cash             Commercial bank converts reserves into physical cash from central bank
+return-cash             Commercial bank returns physical cash to central bank and receives reserves
+
+move-cash               Physical cash transport between commercial banks, without reserve settlement
+sell-cash               One commercial bank sells physical cash to another commercial bank, settled with reserves
 
 # ---------------------------------------- RESERVES ----------------------------------------
 lend-reserves           Create reserves by lending to a bank
@@ -75,7 +77,7 @@ accrue-interest         Add interest to loan balance
 default-loan            Mark loan as defaulted
 write-off-loan          Remove bad loan from bank assets
 
-# TODO
+# Additional implemented command groups
 
 Commercial bank deposits and internal transfers
 Command Purpose
@@ -164,4 +166,21 @@ list-humans List humans
 list-accounts List accounts
 snapshot name Save current world state
 load-snapshot name Restore previous state
+```
+
+## Scenario scripts
+
+Each script resets `mini_world.json`, sets up the actors needed for that category,
+and runs a representative path.
+
+```sh
+sh scripts/accounts.sh
+sh scripts/sepa.sh
+sh scripts/swift.sh
+sh scripts/securities.sh
+sh scripts/cheques.sh
+sh scripts/cards.sh
+sh scripts/fx.sh
+sh scripts/failures.sh
+sh scripts/audit.sh
 ```

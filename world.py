@@ -18,6 +18,13 @@ def create_empty_world() -> dict[str, Any]:
         "payment_instructions": {},
         "messages": {},
         "settlements": {},
+        "step2_systems": {},
+        "correspondent_accounts": {},
+        "bonds": {},
+        "cheques": {},
+        "card_authorizations": {},
+        "fx_markets": {},
+        "snapshots": {},
         "command_history": [],
     }
 
@@ -34,10 +41,18 @@ def ensure_world_shape(world: dict[str, Any]) -> dict[str, Any]:
     world.setdefault("humans", {})
     world.setdefault("accounts", {})
     world.setdefault("customer_loans", {})
+    world.setdefault("holds", {})
     world.setdefault("ledger_entries", [])
     world.setdefault("payment_instructions", {})
     world.setdefault("messages", {})
     world.setdefault("settlements", {})
+    world.setdefault("step2_systems", {})
+    world.setdefault("correspondent_accounts", {})
+    world.setdefault("bonds", {})
+    world.setdefault("cheques", {})
+    world.setdefault("card_authorizations", {})
+    world.setdefault("fx_markets", {})
+    world.setdefault("snapshots", {})
     world.setdefault("command_history", [])
 
     return world
