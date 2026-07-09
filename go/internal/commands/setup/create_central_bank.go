@@ -29,7 +29,8 @@ func runCreateCentralBank(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if err := domain.CreateCentralBank(w, centralBankID, currency); err != nil {
+	currencyCreated, err := domain.CreateCentralBank(w, centralBankID, currency)
+	if err != nil {
 		return commandrun.PrintBusinessError(err)
 	}
 
@@ -38,5 +39,8 @@ func runCreateCentralBank(cmd *cobra.Command, args []string) error {
 	}
 
 	commandlog.Action("Created central bank: %s (%s)", centralBankID, currency)
+	if currencyCreated {
+		commandlog.State("Registered currency: %s", currency)
+	}
 	return nil
 }

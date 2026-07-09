@@ -8,6 +8,7 @@ func New() *World {
 		Banks:        map[string]*Bank{},
 		Humans:       map[string]*Human{},
 		Accounts:     map[string]*Account{},
+		Currencies:   map[string]*Currency{},
 
 		CustomerLoans: map[string]map[string]any{},
 		Holds:         map[string]map[string]any{},
@@ -27,6 +28,10 @@ func New() *World {
 
 		CommandHistory: []CommandHistoryEntry{},
 	}
+}
+
+func NewCurrency() *Currency {
+	return &Currency{}
 }
 
 func NewCentralBank(id string, currency string) *CentralBank {

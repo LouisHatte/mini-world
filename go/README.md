@@ -62,8 +62,6 @@ list-entities List all entities
 
 # ---------------------------------------- SETUP ----------------------------------------
 
-create-currency Create currency
-
 # ---------------------------------------- CASH ----------------------------------------
 
 show-cash Show cash balances by holder

@@ -7,15 +7,19 @@ import (
 	"mini-world-go/internal/world"
 )
 
-func CreateCentralBank(w *world.World, centralBankID string, currency string) error {
+func CreateCentralBank(w *world.World, centralBankID string, currency string) (bool, error) {
 	if _, exists := w.CentralBanks[centralBankID]; exists {
-		return fmt.Errorf("central bank already exists: %s", centralBankID)
+		return false, fmt.Errorf("central bank already exists: %s", centralBankID)
 	}
 
 	currency = strings.ToUpper(currency)
+	_, currencyAlreadyExists := w.Currencies[currency]
 	w.CentralBanks[centralBankID] = world.NewCentralBank(centralBankID, currency)
+	if !currencyAlreadyExists {
+		w.Currencies[currency] = world.NewCurrency()
+	}
 
-	return nil
+	return !currencyAlreadyExists, nil
 }
 
 func CreateBank(w *world.World, bankID string) error {

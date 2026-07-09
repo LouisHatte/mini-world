@@ -10,7 +10,31 @@ func (w *World) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
+	if defaults.Currencies == nil {
+		defaults.Currencies = map[string]*Currency{}
+	}
+
+	for _, centralBank := range defaults.CentralBanks {
+		if centralBank.Currency != "" {
+			if _, exists := defaults.Currencies[centralBank.Currency]; !exists {
+				defaults.Currencies[centralBank.Currency] = NewCurrency()
+			}
+		}
+	}
+
 	*w = *defaults
+	return nil
+}
+
+func (currency *Currency) UnmarshalJSON(data []byte) error {
+	type alias Currency
+
+	defaults := NewCurrency()
+	if err := json.Unmarshal(data, (*alias)(defaults)); err != nil {
+		return err
+	}
+
+	*currency = *defaults
 	return nil
 }
 
