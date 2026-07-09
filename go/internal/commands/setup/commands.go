@@ -8,5 +8,6 @@ func Commands() []*cobra.Command {
 		newCreateBankCommand(),
 		newCreateHumanCommand(),
 		newOpenAccountCommand(),
+		newOpenReserveAccountCommand(),
 	}
 }

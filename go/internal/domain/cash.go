@@ -196,7 +196,10 @@ func SupplyCash(w *world.World, centralBankID string, bankID string, amount int)
 	}
 
 	currency := centralBank.Currency
-	bankReservesAtCentralBank := bank.ReserveBalances[centralBankID]
+	bankReservesAtCentralBank, err := reserveBalance(centralBank, bank, centralBankID, bankID)
+	if err != nil {
+		return err
+	}
 
 	if centralBank.CashVault < amount {
 		return fmt.Errorf(
@@ -297,7 +300,15 @@ func SellCash(w *world.World, centralBankID string, sellerBankID string, buyerBa
 		)
 	}
 
-	buyerReserves := buyerBank.ReserveBalances[centralBankID]
+	if _, err := reserveBalance(centralBank, sellerBank, centralBankID, sellerBankID); err != nil {
+		return err
+	}
+
+	buyerReserves, err := reserveBalance(centralBank, buyerBank, centralBankID, buyerBankID)
+	if err != nil {
+		return err
+	}
+
 	if buyerReserves < amount {
 		return fmt.Errorf(
 			"not enough reserves for %s at %s. Available: %d %s",
@@ -308,40 +319,12 @@ func SellCash(w *world.World, centralBankID string, sellerBankID string, buyerBa
 		)
 	}
 
-	sellerCentralBankReserves := centralBank.ReserveAccounts[sellerBankID]
-	sellerReserveMirror := sellerBank.ReserveBalances[centralBankID]
-	if sellerCentralBankReserves != sellerReserveMirror {
-		return fmt.Errorf(
-			"reserve mirror mismatch. %s.reserve_accounts[%s] = %d, %s.reserve_balances[%s] = %d",
-			centralBankID,
-			sellerBankID,
-			sellerCentralBankReserves,
-			sellerBankID,
-			centralBankID,
-			sellerReserveMirror,
-		)
-	}
-
-	buyerCentralBankReserves := centralBank.ReserveAccounts[buyerBankID]
-	buyerReserveMirror := buyerBank.ReserveBalances[centralBankID]
-	if buyerCentralBankReserves != buyerReserveMirror {
-		return fmt.Errorf(
-			"reserve mirror mismatch. %s.reserve_accounts[%s] = %d, %s.reserve_balances[%s] = %d",
-			centralBankID,
-			buyerBankID,
-			buyerCentralBankReserves,
-			buyerBankID,
-			centralBankID,
-			buyerReserveMirror,
-		)
-	}
-
 	sellerBank.CashVault[currency] = sellerCash - amount
 	buyerBank.CashVault[currency] += amount
-	centralBank.ReserveAccounts[sellerBankID] = sellerCentralBankReserves + amount
-	sellerBank.ReserveBalances[centralBankID] = sellerReserveMirror + amount
-	centralBank.ReserveAccounts[buyerBankID] = buyerCentralBankReserves - amount
-	buyerBank.ReserveBalances[centralBankID] = buyerReserveMirror - amount
+	centralBank.ReserveAccounts[sellerBankID] += amount
+	sellerBank.ReserveBalances[centralBankID] += amount
+	centralBank.ReserveAccounts[buyerBankID] -= amount
+	buyerBank.ReserveBalances[centralBankID] -= amount
 
 	return nil
 }
@@ -373,25 +356,15 @@ func ReturnCash(w *world.World, centralBankID string, bankID string, amount int)
 		)
 	}
 
-	centralBankReserves := centralBank.ReserveAccounts[bankID]
-	bankReserveMirror := bank.ReserveBalances[centralBankID]
-
-	if centralBankReserves != bankReserveMirror {
-		return fmt.Errorf(
-			"reserve mirror mismatch. %s.reserve_accounts[%s] = %d, %s.reserve_balances[%s] = %d",
-			centralBankID,
-			bankID,
-			centralBankReserves,
-			bankID,
-			centralBankID,
-			bankReserveMirror,
-		)
+	centralBankReserves, err := reserveBalance(centralBank, bank, centralBankID, bankID)
+	if err != nil {
+		return err
 	}
 
 	bank.CashVault[currency] = bankCash - amount
 	centralBank.CashVault += amount
 	centralBank.ReserveAccounts[bankID] = centralBankReserves + amount
-	bank.ReserveBalances[centralBankID] = bankReserveMirror + amount
+	bank.ReserveBalances[centralBankID] = centralBankReserves + amount
 
 	return nil
 }
@@ -421,4 +394,27 @@ func DestroyCash(w *world.World, centralBankID string, amount int) error {
 	centralBank.CashIssued -= amount
 
 	return nil
+}
+
+func reserveBalance(centralBank *world.CentralBank, bank *world.Bank, centralBankID string, bankID string) (int, error) {
+	centralBankReserves, centralBankHasAccount := centralBank.ReserveAccounts[bankID]
+	bankReserveMirror, bankHasAccount := bank.ReserveBalances[centralBankID]
+
+	if !centralBankHasAccount || !bankHasAccount {
+		return 0, fmt.Errorf("reserve account does not exist: %s at %s", bankID, centralBankID)
+	}
+
+	if centralBankReserves != bankReserveMirror {
+		return 0, fmt.Errorf(
+			"reserve mirror mismatch. %s.reserve_accounts[%s] = %d, %s.reserve_balances[%s] = %d",
+			centralBankID,
+			bankID,
+			centralBankReserves,
+			bankID,
+			centralBankID,
+			bankReserveMirror,
+		)
+	}
+
+	return centralBankReserves, nil
 }

@@ -64,6 +64,31 @@ func OpenAccount(w *world.World, humanID string, bankID string, currency string)
 	return accountID, nil
 }
 
+func OpenReserveAccount(w *world.World, centralBankID string, bankID string) error {
+	centralBank, centralBankExists := w.CentralBanks[centralBankID]
+	if !centralBankExists {
+		return fmt.Errorf("central bank does not exist: %s", centralBankID)
+	}
+
+	bank, bankExists := w.Banks[bankID]
+	if !bankExists {
+		return fmt.Errorf("bank does not exist: %s", bankID)
+	}
+
+	if _, exists := centralBank.ReserveAccounts[bankID]; exists {
+		return fmt.Errorf("reserve account already exists: %s at %s", bankID, centralBankID)
+	}
+
+	if _, exists := bank.ReserveBalances[centralBankID]; exists {
+		return fmt.Errorf("reserve balance already exists: %s at %s", bankID, centralBankID)
+	}
+
+	centralBank.ReserveAccounts[bankID] = 0
+	bank.ReserveBalances[centralBankID] = 0
+
+	return nil
+}
+
 func BuildAccountID(bankID string, humanID string, currency string) string {
 	return fmt.Sprintf("acc_%s_%s_%s", bankID, humanID, strings.ToLower(currency))
 }
