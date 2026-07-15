@@ -15,7 +15,7 @@ import (
 
 func newRegisterAssetCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "register-asset asset_id owner_human_id currency estimated_value",
+		Use:   "register-asset asset_id owner_id currency estimated_value",
 		Short: "Register an already existing asset.",
 		Args:  cobra.ExactArgs(4),
 		RunE:  runRegisterAsset,
@@ -24,7 +24,7 @@ func newRegisterAssetCommand() *cobra.Command {
 
 func runRegisterAsset(cmd *cobra.Command, args []string) error {
 	assetID := args[0]
-	ownerHumanID := args[1]
+	ownerID := args[1]
 	currency := strings.ToUpper(args[2])
 	estimatedValue, err := strconv.Atoi(args[3])
 	if err != nil {
@@ -36,7 +36,7 @@ func runRegisterAsset(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if err := domain.RegisterAsset(w, assetID, ownerHumanID, currency, estimatedValue); err != nil {
+	if err := domain.RegisterAsset(w, assetID, ownerID, currency, estimatedValue); err != nil {
 		return commandrun.PrintBusinessError(err)
 	}
 
@@ -45,7 +45,8 @@ func runRegisterAsset(cmd *cobra.Command, args []string) error {
 	}
 
 	commandlog.Action("Registered asset: %s", assetID)
-	commandlog.State("Owner: %s", ownerHumanID)
+	asset := w.Assets[assetID]
+	commandlog.State("Owner: %s %s", asset.OwnerType, asset.OwnerID)
 	commandlog.State("Currency: %s", currency)
 	commandlog.State("Estimated value: %d %s", estimatedValue, currency)
 	return nil

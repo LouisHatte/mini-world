@@ -10,6 +10,7 @@ func New() *World {
 		Accounts:     map[string]*Account{},
 		Currencies:   map[string]*Currency{},
 		Assets:       map[string]*Asset{},
+		ReserveLoans: map[string]*ReserveLoan{},
 
 		CustomerLoans: map[string]map[string]any{},
 		Holds:         map[string]map[string]any{},
@@ -35,12 +36,28 @@ func NewCurrency() *Currency {
 	return &Currency{}
 }
 
-func NewAsset(id string, ownerHumanID string, currency string, estimatedValue int) *Asset {
+func NewAsset(id string, ownerType AssetOwnerType, ownerID string, currency string, estimatedValue int) *Asset {
 	return &Asset{
-		ID:             id,
-		OwnerHumanID:   ownerHumanID,
-		Currency:       currency,
-		EstimatedValue: estimatedValue,
+		ID:                         id,
+		OwnerType:                  ownerType,
+		OwnerID:                    ownerID,
+		Currency:                   currency,
+		EstimatedValue:             estimatedValue,
+		PledgedToCentralBankID:     "",
+		CollateralForReserveLoanID: "",
+	}
+}
+
+func NewReserveLoan(id string, centralBankID string, bankID string, currency string, amount int, collateralAssetID string) *ReserveLoan {
+	return &ReserveLoan{
+		ID:                id,
+		CentralBankID:     centralBankID,
+		BankID:            bankID,
+		Currency:          currency,
+		Principal:         amount,
+		Outstanding:       amount,
+		CollateralAssetID: collateralAssetID,
+		Status:            ReserveLoanOpen,
 	}
 }
 

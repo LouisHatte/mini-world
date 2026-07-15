@@ -41,12 +41,24 @@ func (currency *Currency) UnmarshalJSON(data []byte) error {
 func (asset *Asset) UnmarshalJSON(data []byte) error {
 	type alias Asset
 
-	defaults := NewAsset("", "", "", 0)
+	defaults := NewAsset("", "", "", "", 0)
 	if err := json.Unmarshal(data, (*alias)(defaults)); err != nil {
 		return err
 	}
 
 	*asset = *defaults
+	return nil
+}
+
+func (reserveLoan *ReserveLoan) UnmarshalJSON(data []byte) error {
+	type alias ReserveLoan
+
+	defaults := NewReserveLoan("", "", "", "", 0, "")
+	if err := json.Unmarshal(data, (*alias)(defaults)); err != nil {
+		return err
+	}
+
+	*reserveLoan = *defaults
 	return nil
 }
 

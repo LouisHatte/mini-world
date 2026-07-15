@@ -38,7 +38,7 @@ func runBuyAssetCash(cmd *cobra.Command, args []string) error {
 	if !ok {
 		return commandrun.PrintBusinessError(fmt.Errorf("asset does not exist: %s", assetID))
 	}
-	sellerHumanID := asset.OwnerHumanID
+	sellerHumanID := asset.OwnerID
 	currency := asset.Currency
 
 	if err := domain.BuyAssetCash(w, buyerHumanID, assetID, amount); err != nil {
@@ -52,7 +52,7 @@ func runBuyAssetCash(cmd *cobra.Command, args []string) error {
 	buyer := w.Humans[buyerHumanID]
 	seller := w.Humans[sellerHumanID]
 	commandlog.Action("%s bought asset %s from %s for %d %s cash", buyerHumanID, assetID, sellerHumanID, amount, currency)
-	commandlog.State("%s owner: %s", assetID, w.Assets[assetID].OwnerHumanID)
+	commandlog.State("%s owner: %s %s", assetID, w.Assets[assetID].OwnerType, w.Assets[assetID].OwnerID)
 	commandlog.State("%s cash_wallet[%s]: %d %s", buyerHumanID, currency, buyer.CashWallet[currency], currency)
 	commandlog.State("%s cash_wallet[%s]: %d %s", sellerHumanID, currency, seller.CashWallet[currency], currency)
 	return nil

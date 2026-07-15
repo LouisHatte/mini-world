@@ -9,6 +9,7 @@ type World struct {
 	Accounts     map[string]*Account     `json:"accounts"`
 	Currencies   map[string]*Currency    `json:"currencies"`
 	Assets       map[string]*Asset       `json:"assets"`
+	ReserveLoans map[string]*ReserveLoan `json:"reserve_loans"`
 
 	CustomerLoans map[string]map[string]any `json:"customer_loans"`
 	Holds         map[string]map[string]any `json:"holds"`
@@ -42,11 +43,40 @@ type CentralBank struct {
 
 type Currency struct{}
 
+type AssetOwnerType string
+
+const (
+	AssetOwnerHuman       AssetOwnerType = "HUMAN"
+	AssetOwnerBank        AssetOwnerType = "BANK"
+	AssetOwnerCentralBank AssetOwnerType = "CENTRAL_BANK"
+)
+
 type Asset struct {
-	ID             string `json:"id"`
-	OwnerHumanID   string `json:"owner_human_id"`
-	Currency       string `json:"currency"`
-	EstimatedValue int    `json:"estimated_value"`
+	ID                         string         `json:"id"`
+	OwnerType                  AssetOwnerType `json:"owner_type"`
+	OwnerID                    string         `json:"owner_id"`
+	Currency                   string         `json:"currency"`
+	EstimatedValue             int            `json:"estimated_value"`
+	PledgedToCentralBankID     string         `json:"pledged_to_central_bank_id"`
+	CollateralForReserveLoanID string         `json:"collateral_for_reserve_loan_id"`
+}
+
+type ReserveLoanStatus string
+
+const (
+	ReserveLoanOpen   ReserveLoanStatus = "OPEN"
+	ReserveLoanRepaid ReserveLoanStatus = "REPAID"
+)
+
+type ReserveLoan struct {
+	ID                string            `json:"id"`
+	CentralBankID     string            `json:"central_bank_id"`
+	BankID            string            `json:"bank_id"`
+	Currency          string            `json:"currency"`
+	Principal         int               `json:"principal"`
+	Outstanding       int               `json:"outstanding"`
+	CollateralAssetID string            `json:"collateral_asset_id"`
+	Status            ReserveLoanStatus `json:"status"`
 }
 
 type Bank struct {

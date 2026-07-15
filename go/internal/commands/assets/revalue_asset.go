@@ -43,7 +43,7 @@ func runRevalueAsset(cmd *cobra.Command, args []string) error {
 
 	asset := w.Assets[assetID]
 	commandlog.Action("Revalued asset: %s", assetID)
-	commandlog.State("Owner: %s", asset.OwnerHumanID)
+	commandlog.State("Owner: %s %s", asset.OwnerType, asset.OwnerID)
 	commandlog.State("Estimated value: %d %s", asset.EstimatedValue, asset.Currency)
 	return nil
 }

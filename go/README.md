@@ -17,6 +17,8 @@ Run the milestone scenario:
 sh scripts/01.setup.sh
 sh scripts/02.cash.sh
 sh scripts/03.assets.sh
+sh scripts/04.reserves.sh
+sh scripts/05.asset-reserves.sh
 ```
 
 ## Commands
@@ -56,7 +58,14 @@ sell-cash               One commercial bank sells physical cash to another comme
 
 register-asset          Setup/admin: register an already existing asset
 buy-asset-cash          Human buys an existing asset with physical cash
+buy-asset-reserves      Bank or central bank buys an asset, settled with reserves
 revalue-asset           Change estimated asset value
+
+# ---------------------------------------- RESERVES ----------------------------------------
+
+lend-reserves           Central bank lends reserves against collateral
+repay-reserve-loan      Commercial bank repays central bank reserve loan
+reserve-transfer        Transfer reserves between commercial banks
 ```
 
 ## TODO
@@ -79,13 +88,7 @@ check-cash Check cash consistency
 show-deposits Show all bank deposit liabilities
 show-account Show one human bank account
 
-# ---------------------------------------- RESERVES ----------------------------------------
-
-issue-reserves Central bank creates reserves for a commercial bank
-reserve-transfer Transfer reserves between commercial banks
 show-reserves Show reserve balances
-set-reserve-requirement Set minimum reserve ratio
-check-reserve-ratio Check commercial bank reserve ratio
 
 # ---------------------------------------- PAYMENTS ----------------------------------------
 

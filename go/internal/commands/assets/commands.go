@@ -6,6 +6,7 @@ func Commands() []*cobra.Command {
 	return []*cobra.Command{
 		newRegisterAssetCommand(),
 		newBuyAssetCashCommand(),
+		newBuyAssetReservesCommand(),
 		newRevalueAssetCommand(),
 	}
 }
