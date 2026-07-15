@@ -15,9 +15,9 @@ type World struct {
 	Holds         map[string]map[string]any `json:"holds"`
 	LedgerEntries []map[string]any          `json:"ledger_entries"`
 
-	PaymentInstructions map[string]map[string]any `json:"payment_instructions"`
-	Messages            map[string]map[string]any `json:"messages"`
-	Settlements         map[string]map[string]any `json:"settlements"`
+	PaymentInstructions map[string]*PaymentInstruction `json:"payment_instructions"`
+	Messages            map[string]map[string]any      `json:"messages"`
+	Settlements         map[string]map[string]any      `json:"settlements"`
 
 	Step2Systems          map[string]map[string]any `json:"step2_systems"`
 	CorrespondentAccounts map[string]map[string]any `json:"correspondent_accounts"`
@@ -117,6 +117,34 @@ type Account struct {
 	BookedBalance int           `json:"booked_balance"`
 	Holds         []string      `json:"holds"`
 	Status        AccountStatus `json:"status"`
+}
+
+type PaymentType string
+
+const (
+	PaymentInternal  PaymentType = "INTERNAL"
+	PaymentInterbank PaymentType = "INTERBANK"
+)
+
+type PaymentStatus string
+
+const (
+	PaymentCompleted PaymentStatus = "COMPLETED"
+)
+
+type PaymentInstruction struct {
+	ID                 string        `json:"id"`
+	Type               PaymentType   `json:"type"`
+	Status             PaymentStatus `json:"status"`
+	SenderHumanID      string        `json:"sender_human_id"`
+	RecipientHumanID   string        `json:"recipient_human_id"`
+	SenderBankID       string        `json:"sender_bank_id"`
+	RecipientBankID    string        `json:"recipient_bank_id"`
+	SenderAccountID    string        `json:"sender_account_id"`
+	RecipientAccountID string        `json:"recipient_account_id"`
+	CentralBankID      string        `json:"central_bank_id"`
+	Currency           string        `json:"currency"`
+	Amount             int           `json:"amount"`
 }
 
 type CommandHistoryEntry struct {

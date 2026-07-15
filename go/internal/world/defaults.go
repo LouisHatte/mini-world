@@ -16,7 +16,7 @@ func New() *World {
 		Holds:         map[string]map[string]any{},
 		LedgerEntries: []map[string]any{},
 
-		PaymentInstructions: map[string]map[string]any{},
+		PaymentInstructions: map[string]*PaymentInstruction{},
 		Messages:            map[string]map[string]any{},
 		Settlements:         map[string]map[string]any{},
 
@@ -58,6 +58,23 @@ func NewReserveLoan(id string, centralBankID string, bankID string, currency str
 		Outstanding:       amount,
 		CollateralAssetID: collateralAssetID,
 		Status:            ReserveLoanOpen,
+	}
+}
+
+func NewPaymentInstruction(id string, paymentType PaymentType, senderHumanID string, senderBankID string, recipientHumanID string, recipientBankID string, senderAccountID string, recipientAccountID string, centralBankID string, currency string, amount int) *PaymentInstruction {
+	return &PaymentInstruction{
+		ID:                 id,
+		Type:               paymentType,
+		Status:             PaymentCompleted,
+		SenderHumanID:      senderHumanID,
+		RecipientHumanID:   recipientHumanID,
+		SenderBankID:       senderBankID,
+		RecipientBankID:    recipientBankID,
+		SenderAccountID:    senderAccountID,
+		RecipientAccountID: recipientAccountID,
+		CentralBankID:      centralBankID,
+		Currency:           currency,
+		Amount:             amount,
 	}
 }
 

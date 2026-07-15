@@ -19,6 +19,7 @@ sh scripts/02.cash.sh
 sh scripts/03.assets.sh
 sh scripts/04.reserves.sh
 sh scripts/05.asset-reserves.sh
+sh scripts/06.payments.sh
 ```
 
 ## Commands
@@ -66,6 +67,12 @@ revalue-asset           Change estimated asset value
 lend-reserves           Central bank lends reserves against collateral
 repay-reserve-loan      Commercial bank repays central bank reserve loan
 reserve-transfer        Transfer reserves between commercial banks
+
+# ---------------------------------------- PAYMENTS ----------------------------------------
+
+internal-transfer       Transfer deposits between two humans inside the same commercial bank
+interbank-payment       Transfer deposits between humans at different banks, settled with reserves
+pay                     High-level payment command, auto-detects internal or interbank payment
 ```
 
 ## TODO
@@ -87,14 +94,8 @@ check-cash Check cash consistency
 
 show-deposits Show all bank deposit liabilities
 show-account Show one human bank account
-
 show-reserves Show reserve balances
 
-# ---------------------------------------- PAYMENTS ----------------------------------------
-
-pay Human pays another human, auto internal/interbank
-internal-transfer Transfer deposits inside same bank
-interbank-payment Transfer between humans at different banks
 show-payments Show payment history
 
 # ---------------------------------------- LOANS ----------------------------------------
