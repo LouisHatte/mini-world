@@ -31,29 +31,31 @@ func LendReserves(w *world.World, centralBankID string, bankID string, currency 
 		return "", err
 	}
 
-	collateral, ok := w.Assets[collateralAssetID]
-	if !ok {
-		return "", fmt.Errorf("collateral asset does not exist: %s", collateralAssetID)
-	}
+	if collateralAssetID != "" {
+		collateral, ok := w.Assets[collateralAssetID]
+		if !ok {
+			return "", fmt.Errorf("collateral asset does not exist: %s", collateralAssetID)
+		}
 
-	if collateral.OwnerType != world.AssetOwnerBank || collateral.OwnerID != bankID {
-		return "", fmt.Errorf("collateral asset is not owned by bank: %s", bankID)
-	}
+		if collateral.OwnerType != world.AssetOwnerBank || collateral.OwnerID != bankID {
+			return "", fmt.Errorf("collateral asset is not owned by bank: %s", bankID)
+		}
 
-	if collateral.Currency != currency {
-		return "", fmt.Errorf("collateral asset currency is %s, not %s", collateral.Currency, currency)
-	}
+		if collateral.Currency != currency {
+			return "", fmt.Errorf("collateral asset currency is %s, not %s", collateral.Currency, currency)
+		}
 
-	if collateral.CollateralForReserveLoanID != "" {
-		return "", fmt.Errorf("collateral asset is already pledged to reserve loan: %s", collateral.CollateralForReserveLoanID)
-	}
+		if collateral.CollateralForReserveLoanID != "" {
+			return "", fmt.Errorf("collateral asset is already pledged to reserve loan: %s", collateral.CollateralForReserveLoanID)
+		}
 
-	if collateral.EstimatedValue < amount {
-		return "", fmt.Errorf(
-			"collateral value is too low. Estimated value: %d %s",
-			collateral.EstimatedValue,
-			currency,
-		)
+		if collateral.EstimatedValue < amount {
+			return "", fmt.Errorf(
+				"collateral value is too low. Estimated value: %d %s",
+				collateral.EstimatedValue,
+				currency,
+			)
+		}
 	}
 
 	reserveLoanID := nextReserveLoanID(w, centralBankID, bankID)
@@ -63,8 +65,11 @@ func LendReserves(w *world.World, centralBankID string, bankID string, currency 
 	bank.ReserveBalances[centralBankID] += amount
 	centralBank.LoansToBanks[bankID] += amount
 	bank.LoansFromCentralBanks[centralBankID] += amount
-	collateral.PledgedToCentralBankID = centralBankID
-	collateral.CollateralForReserveLoanID = reserveLoanID
+	if collateralAssetID != "" {
+		collateral := w.Assets[collateralAssetID]
+		collateral.PledgedToCentralBankID = centralBankID
+		collateral.CollateralForReserveLoanID = reserveLoanID
+	}
 
 	return reserveLoanID, nil
 }

@@ -17,8 +17,8 @@ func newLendReservesCommand() *cobra.Command {
 	var collateralAssetID string
 
 	cmd := &cobra.Command{
-		Use:   "lend-reserves central_bank_id bank_id currency amount --collateral asset_id",
-		Short: "Central bank lends reserves against collateral.",
+		Use:   "lend-reserves central_bank_id bank_id currency amount",
+		Short: "Central bank lends reserves, optionally against collateral.",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runLendReserves(args, collateralAssetID)
@@ -26,7 +26,6 @@ func newLendReservesCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&collateralAssetID, "collateral", "", "Collateral asset ID.")
-	_ = cmd.MarkFlagRequired("collateral")
 
 	return cmd
 }
@@ -50,7 +49,12 @@ func runLendReserves(args []string, collateralAssetID string) error {
 		return commandrun.PrintBusinessError(err)
 	}
 
-	if err := commandrun.SaveWithHistory(w, "lend-reserves", append(args, "--collateral", collateralAssetID)); err != nil {
+	historyArgs := append([]string{}, args...)
+	if collateralAssetID != "" {
+		historyArgs = append(historyArgs, "--collateral", collateralAssetID)
+	}
+
+	if err := commandrun.SaveWithHistory(w, "lend-reserves", historyArgs); err != nil {
 		return err
 	}
 
@@ -59,7 +63,9 @@ func runLendReserves(args []string, collateralAssetID string) error {
 	reserveLoan := w.ReserveLoans[reserveLoanID]
 	commandlog.Action("Lent %d %s reserves from %s to %s", amount, currency, centralBankID, bankID)
 	commandlog.State("Reserve loan: %s", reserveLoanID)
-	commandlog.State("Collateral: %s", collateralAssetID)
+	if collateralAssetID != "" {
+		commandlog.State("Collateral: %s", collateralAssetID)
+	}
 	commandlog.State("%s reserve account for %s: %d %s", centralBankID, bankID, centralBank.ReserveAccounts[bankID], currency)
 	commandlog.State("%s reserves at %s: %d %s", bankID, centralBankID, bank.ReserveBalances[centralBankID], currency)
 	commandlog.State("%s loan to %s: %d %s", centralBankID, bankID, centralBank.LoansToBanks[bankID], currency)

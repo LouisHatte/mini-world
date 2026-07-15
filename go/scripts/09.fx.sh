@@ -31,10 +31,8 @@ go run ./cmd/mini issue-cash fed 1000
 go run ./cmd/mini seed-cash fed bob 300
 go run ./cmd/mini deposit-cash bob bank1 USD 200
 
-go run ./cmd/mini register-asset bank1_eur_bond bank1 EUR 1000
-go run ./cmd/mini register-asset bank2_usd_bond bank2 USD 1000
-go run ./cmd/mini lend-reserves ecb bank1 EUR 300 --collateral bank1_eur_bond
-go run ./cmd/mini lend-reserves fed bank2 USD 300 --collateral bank2_usd_bond
+go run ./cmd/mini lend-reserves ecb bank1 EUR 300
+go run ./cmd/mini lend-reserves fed bank2 USD 300
 
 go run ./cmd/mini set-fx-rate EUR USD 1.1
 go run ./cmd/mini fx-convert-deposit alice bank1 EUR USD 100

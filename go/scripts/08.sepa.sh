@@ -23,8 +23,7 @@ go run ./cmd/mini issue-cash ecb 1000
 go run ./cmd/mini seed-cash ecb alice 500
 go run ./cmd/mini deposit-cash alice bank1 EUR 400
 
-go run ./cmd/mini register-asset bond1 bank1 EUR 1000
-go run ./cmd/mini lend-reserves ecb bank1 EUR 500 --collateral bond1
+go run ./cmd/mini lend-reserves ecb bank1 EUR 500
 
 go run ./cmd/mini sepa-credit-transfer alice bank1 bob bank2 EUR 100
 go run ./cmd/mini settle-sepa payment_000001

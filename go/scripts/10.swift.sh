@@ -23,8 +23,7 @@ go run ./cmd/mini issue-cash ecb 1000
 go run ./cmd/mini seed-cash ecb alice 500
 go run ./cmd/mini deposit-cash alice bank1 EUR 400
 
-go run ./cmd/mini register-asset bond1 bank1 EUR 1000
-go run ./cmd/mini lend-reserves ecb bank1 EUR 300 --collateral bond1
+go run ./cmd/mini lend-reserves ecb bank1 EUR 300
 
 go run ./cmd/mini open-correspondent-account bank1 bank2 EUR
 go run ./cmd/mini fund-correspondent-account corr_bank1_bank2_eur 200

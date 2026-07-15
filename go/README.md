@@ -68,7 +68,7 @@ revalue-asset           Change estimated asset value
 
 # ---------------------------------------- RESERVES ----------------------------------------
 
-lend-reserves           Central bank lends reserves against collateral
+lend-reserves           Central bank lends reserves, optionally with --collateral asset_id
 repay-reserve-loan      Commercial bank repays central bank reserve loan
 reserve-transfer        Transfer reserves between commercial banks
 
@@ -80,7 +80,7 @@ pay                     High-level payment command, auto-detects internal or int
 
 # ---------------------------------------- LOANS ----------------------------------------
 
-grant-loan              Bank grants loan and creates deposit, optionally with collateral
+grant-loan              Bank grants loan and creates deposit, optionally with --collateral asset_id
 accrue-interest         Accrue interest on loans
 repay-loan              Human repays loan
 default-loan            Mark loan as defaulted
