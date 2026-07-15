@@ -22,6 +22,7 @@ sh scripts/05.asset-reserves.sh
 sh scripts/06.payments.sh
 sh scripts/07.loans.sh
 sh scripts/08.sepa.sh
+sh scripts/09.fx.sh
 ```
 
 ## Commands
@@ -89,18 +90,18 @@ sepa-credit-transfer    Create SEPA credit transfer
 sepa-instant            Create and settle SEPA instant payment
 settle-sepa             Settle SEPA transfers with reserves
 reject-sepa             Reject a non-settled SEPA payment and refund sender
+
+# ---------------------------------------- FX ----------------------------------------
+
+set-fx-rate             Set exchange rate between two currencies
+fx-convert-deposit      Human converts bank deposit from one currency to another through a bank
+fx-convert-cash         Human exchanges physical cash from one currency to another through a bank
+fx-bank-trade           Two banks exchange currencies, settled with reserves
 ```
 
 ## TODO
 
 ```sh
-# ---------------------------------------- FX ----------------------------------------
-
-set-fx-rate Set exchange rate
-fx-convert Convert human deposit between currencies
-fx-bank-trade FX trade between banks
-fx-revalue Revalue FX positions
-
 # ---------------------------------------- SWIFT ----------------------------------------
 
 create-correspondent-account Create correspondent account between banks

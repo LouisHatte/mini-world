@@ -86,6 +86,18 @@ func (customerLoan *CustomerLoan) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (fxMarket *FXMarket) UnmarshalJSON(data []byte) error {
+	type alias FXMarket
+
+	defaults := NewFXMarket("", "", "", 0)
+	if err := json.Unmarshal(data, (*alias)(defaults)); err != nil {
+		return err
+	}
+
+	*fxMarket = *defaults
+	return nil
+}
+
 func (centralBank *CentralBank) UnmarshalJSON(data []byte) error {
 	type alias CentralBank
 

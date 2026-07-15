@@ -24,7 +24,7 @@ type World struct {
 	Bonds                 map[string]map[string]any `json:"bonds"`
 	Cheques               map[string]map[string]any `json:"cheques"`
 	CardAuthorizations    map[string]map[string]any `json:"card_authorizations"`
-	FXMarkets             map[string]map[string]any `json:"fx_markets"`
+	FXMarkets             map[string]*FXMarket      `json:"fx_markets"`
 	Snapshots             map[string]map[string]any `json:"snapshots"`
 
 	CommandHistory []CommandHistoryEntry `json:"command_history"`
@@ -180,6 +180,13 @@ type CustomerLoan struct {
 	WrittenOffInterest   int                `json:"written_off_interest"`
 	CollateralAssetID    string             `json:"collateral_asset_id"`
 	Status               CustomerLoanStatus `json:"status"`
+}
+
+type FXMarket struct {
+	ID           string  `json:"id"`
+	FromCurrency string  `json:"from_currency"`
+	ToCurrency   string  `json:"to_currency"`
+	Rate         float64 `json:"rate"`
 }
 
 type CommandHistoryEntry struct {

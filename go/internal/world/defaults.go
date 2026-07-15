@@ -25,7 +25,7 @@ func New() *World {
 		Bonds:                 map[string]map[string]any{},
 		Cheques:               map[string]map[string]any{},
 		CardAuthorizations:    map[string]map[string]any{},
-		FXMarkets:             map[string]map[string]any{},
+		FXMarkets:             map[string]*FXMarket{},
 		Snapshots:             map[string]map[string]any{},
 
 		CommandHistory: []CommandHistoryEntry{},
@@ -94,6 +94,15 @@ func NewCustomerLoan(id string, bankID string, borrowerHumanID string, currency 
 		WrittenOffInterest:   0,
 		CollateralAssetID:    "",
 		Status:               CustomerLoanActive,
+	}
+}
+
+func NewFXMarket(id string, fromCurrency string, toCurrency string, rate float64) *FXMarket {
+	return &FXMarket{
+		ID:           id,
+		FromCurrency: fromCurrency,
+		ToCurrency:   toCurrency,
+		Rate:         rate,
 	}
 }
 
