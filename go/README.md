@@ -21,6 +21,7 @@ sh scripts/04.reserves.sh
 sh scripts/05.asset-reserves.sh
 sh scripts/06.payments.sh
 sh scripts/07.loans.sh
+sh scripts/08.sepa.sh
 ```
 
 ## Commands
@@ -77,48 +78,25 @@ pay                     High-level payment command, auto-detects internal or int
 
 # ---------------------------------------- LOANS ----------------------------------------
 
-grant-loan              Bank grants loan and creates deposit, optionally with --collateral asset_id
+grant-loan              Bank grants loan and creates deposit, optionally with collateral
 accrue-interest         Accrue interest on loans
 repay-loan              Human repays loan
 default-loan            Mark loan as defaulted
+
+# ---------------------------------------- SEPA ----------------------------------------
+
+sepa-credit-transfer    Create SEPA credit transfer
+sepa-instant            Create and settle SEPA instant payment
+settle-sepa             Settle SEPA transfers with reserves
+reject-sepa             Reject a non-settled SEPA payment and refund sender
 ```
 
 ## TODO
 
 ```sh
-# ---------------------------------------- WORLD ----------------------------------------
-
-show-world Show world summary
-list-entities List all entities
-
-# ---------------------------------------- SETUP ----------------------------------------
-
-# ---------------------------------------- CASH ----------------------------------------
-
-show-cash Show cash balances by holder
-check-cash Check cash consistency
-
-# ---------------------------------------- DEPOSITS ----------------------------------------
-
-show-deposits Show all bank deposit liabilities
-show-account Show one human bank account
-show-reserves Show reserve balances
-
-show-payments Show payment history
-
-show-loans Show loans
-
-# ---------------------------------------- SEPA ----------------------------------------
-
-sepa-credit-transfer Create SEPA credit transfer
-sepa-instant Create instant SEPA transfer
-show-sepa-messages Show SEPA messages
-settle-sepa Settle SEPA transfers with reserves
-
 # ---------------------------------------- FX ----------------------------------------
 
 set-fx-rate Set exchange rate
-show-fx-rates Show exchange rates
 fx-convert Convert human deposit between currencies
 fx-bank-trade FX trade between banks
 fx-revalue Revalue FX positions

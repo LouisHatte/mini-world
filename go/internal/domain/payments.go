@@ -61,6 +61,7 @@ func InternalTransfer(w *world.World, senderHumanID string, recipientHumanID str
 		currency,
 		amount,
 	)
+	w.PaymentInstructions[paymentID].Rail = "BOOK"
 
 	return PaymentResult{
 		PaymentID:          paymentID,
@@ -154,6 +155,7 @@ func InterbankPayment(w *world.World, senderHumanID string, senderBankID string,
 		currency,
 		amount,
 	)
+	w.PaymentInstructions[paymentID].Rail = "BOOK"
 
 	return PaymentResult{
 		PaymentID:          paymentID,

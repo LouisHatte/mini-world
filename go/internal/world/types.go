@@ -124,18 +124,25 @@ type Account struct {
 type PaymentType string
 
 const (
-	PaymentInternal  PaymentType = "INTERNAL"
-	PaymentInterbank PaymentType = "INTERBANK"
+	PaymentInternal           PaymentType = "INTERNAL"
+	PaymentInterbank          PaymentType = "INTERBANK"
+	PaymentSepaCreditTransfer PaymentType = "SEPA_CREDIT_TRANSFER"
+	PaymentSepaInstant        PaymentType = "SEPA_INSTANT"
 )
 
 type PaymentStatus string
 
 const (
-	PaymentCompleted PaymentStatus = "COMPLETED"
+	PaymentInitiated        PaymentStatus = "INITIATED"
+	PaymentSettled          PaymentStatus = "SETTLED"
+	PaymentSettlementFailed PaymentStatus = "SETTLEMENT_FAILED"
+	PaymentRejected         PaymentStatus = "REJECTED"
+	PaymentCompleted        PaymentStatus = "COMPLETED"
 )
 
 type PaymentInstruction struct {
 	ID                 string        `json:"id"`
+	Rail               string        `json:"rail"`
 	Type               PaymentType   `json:"type"`
 	Status             PaymentStatus `json:"status"`
 	SenderHumanID      string        `json:"sender_human_id"`
@@ -147,6 +154,9 @@ type PaymentInstruction struct {
 	CentralBankID      string        `json:"central_bank_id"`
 	Currency           string        `json:"currency"`
 	Amount             int           `json:"amount"`
+	MessageID          string        `json:"message_id"`
+	SettlementID       string        `json:"settlement_id"`
+	ReturnReason       string        `json:"return_reason"`
 }
 
 type CustomerLoanStatus string
