@@ -11,7 +11,7 @@ type World struct {
 	Assets       map[string]*Asset       `json:"assets"`
 	ReserveLoans map[string]*ReserveLoan `json:"reserve_loans"`
 
-	CustomerLoans map[string]map[string]any `json:"customer_loans"`
+	CustomerLoans map[string]*CustomerLoan  `json:"customer_loans"`
 	Holds         map[string]map[string]any `json:"holds"`
 	LedgerEntries []map[string]any          `json:"ledger_entries"`
 
@@ -52,13 +52,15 @@ const (
 )
 
 type Asset struct {
-	ID                         string         `json:"id"`
-	OwnerType                  AssetOwnerType `json:"owner_type"`
-	OwnerID                    string         `json:"owner_id"`
-	Currency                   string         `json:"currency"`
-	EstimatedValue             int            `json:"estimated_value"`
-	PledgedToCentralBankID     string         `json:"pledged_to_central_bank_id"`
-	CollateralForReserveLoanID string         `json:"collateral_for_reserve_loan_id"`
+	ID                          string         `json:"id"`
+	OwnerType                   AssetOwnerType `json:"owner_type"`
+	OwnerID                     string         `json:"owner_id"`
+	Currency                    string         `json:"currency"`
+	EstimatedValue              int            `json:"estimated_value"`
+	PledgedToCentralBankID      string         `json:"pledged_to_central_bank_id"`
+	CollateralForReserveLoanID  string         `json:"collateral_for_reserve_loan_id"`
+	PledgedToBankID             string         `json:"pledged_to_bank_id"`
+	CollateralForCustomerLoanID string         `json:"collateral_for_customer_loan_id"`
 }
 
 type ReserveLoanStatus string
@@ -145,6 +147,29 @@ type PaymentInstruction struct {
 	CentralBankID      string        `json:"central_bank_id"`
 	Currency           string        `json:"currency"`
 	Amount             int           `json:"amount"`
+}
+
+type CustomerLoanStatus string
+
+const (
+	CustomerLoanActive    CustomerLoanStatus = "ACTIVE"
+	CustomerLoanRepaid    CustomerLoanStatus = "REPAID"
+	CustomerLoanDefaulted CustomerLoanStatus = "DEFAULTED"
+)
+
+type CustomerLoan struct {
+	ID                   string             `json:"id"`
+	BankID               string             `json:"bank_id"`
+	BorrowerHumanID      string             `json:"borrower_human_id"`
+	Currency             string             `json:"currency"`
+	OriginalPrincipal    int                `json:"original_principal"`
+	OutstandingPrincipal int                `json:"outstanding_principal"`
+	OutstandingInterest  int                `json:"outstanding_interest"`
+	TotalInterestAccrued int                `json:"total_interest_accrued"`
+	WrittenOffPrincipal  int                `json:"written_off_principal"`
+	WrittenOffInterest   int                `json:"written_off_interest"`
+	CollateralAssetID    string             `json:"collateral_asset_id"`
+	Status               CustomerLoanStatus `json:"status"`
 }
 
 type CommandHistoryEntry struct {

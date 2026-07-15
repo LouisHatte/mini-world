@@ -12,7 +12,7 @@ func New() *World {
 		Assets:       map[string]*Asset{},
 		ReserveLoans: map[string]*ReserveLoan{},
 
-		CustomerLoans: map[string]map[string]any{},
+		CustomerLoans: map[string]*CustomerLoan{},
 		Holds:         map[string]map[string]any{},
 		LedgerEntries: []map[string]any{},
 
@@ -38,13 +38,15 @@ func NewCurrency() *Currency {
 
 func NewAsset(id string, ownerType AssetOwnerType, ownerID string, currency string, estimatedValue int) *Asset {
 	return &Asset{
-		ID:                         id,
-		OwnerType:                  ownerType,
-		OwnerID:                    ownerID,
-		Currency:                   currency,
-		EstimatedValue:             estimatedValue,
-		PledgedToCentralBankID:     "",
-		CollateralForReserveLoanID: "",
+		ID:                          id,
+		OwnerType:                   ownerType,
+		OwnerID:                     ownerID,
+		Currency:                    currency,
+		EstimatedValue:              estimatedValue,
+		PledgedToCentralBankID:      "",
+		CollateralForReserveLoanID:  "",
+		PledgedToBankID:             "",
+		CollateralForCustomerLoanID: "",
 	}
 }
 
@@ -75,6 +77,23 @@ func NewPaymentInstruction(id string, paymentType PaymentType, senderHumanID str
 		CentralBankID:      centralBankID,
 		Currency:           currency,
 		Amount:             amount,
+	}
+}
+
+func NewCustomerLoan(id string, bankID string, borrowerHumanID string, currency string, amount int) *CustomerLoan {
+	return &CustomerLoan{
+		ID:                   id,
+		BankID:               bankID,
+		BorrowerHumanID:      borrowerHumanID,
+		Currency:             currency,
+		OriginalPrincipal:    amount,
+		OutstandingPrincipal: amount,
+		OutstandingInterest:  0,
+		TotalInterestAccrued: 0,
+		WrittenOffPrincipal:  0,
+		WrittenOffInterest:   0,
+		CollateralAssetID:    "",
+		Status:               CustomerLoanActive,
 	}
 }
 

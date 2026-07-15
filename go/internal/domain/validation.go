@@ -10,6 +10,7 @@ func CheckWorld(w *world.World) []string {
 	var errors []string
 	errors = append(errors, checkReserveMirrors(w)...)
 	errors = append(errors, checkLoanMirrors(w)...)
+	errors = append(errors, checkCustomerLoanMirrors(w)...)
 	return errors
 }
 
@@ -115,4 +116,71 @@ func checkLoanMirrors(w *world.World) []string {
 	}
 
 	return errors
+}
+
+func checkCustomerLoanMirrors(w *world.World) []string {
+	var errors []string
+
+	for loanID, loan := range w.CustomerLoans {
+		bank, bankExists := w.Banks[loan.BankID]
+		if !bankExists {
+			errors = append(errors, fmt.Sprintf("%s references unknown bank: %s", loanID, loan.BankID))
+		} else if !containsString(bank.CustomerLoans, loanID) {
+			errors = append(errors, fmt.Sprintf("%s.customer_loans does not contain %s", loan.BankID, loanID))
+		}
+
+		human, humanExists := w.Humans[loan.BorrowerHumanID]
+		if !humanExists {
+			errors = append(errors, fmt.Sprintf("%s references unknown human: %s", loanID, loan.BorrowerHumanID))
+			continue
+		}
+
+		expectedAmount := loan.OutstandingPrincipal + loan.OutstandingInterest
+		mirroredAmount, ok := human.Loans[loanID]
+		if !ok || mirroredAmount != expectedAmount {
+			errors = append(errors, fmt.Sprintf(
+				"Customer loan mismatch: %s expected due = %d, but %s.loans[%s] = %d",
+				loanID,
+				expectedAmount,
+				loan.BorrowerHumanID,
+				loanID,
+				mirroredAmount,
+			))
+		}
+	}
+
+	for humanID, human := range w.Humans {
+		for loanID, mirroredAmount := range human.Loans {
+			loan, ok := w.CustomerLoans[loanID]
+			if !ok {
+				errors = append(errors, fmt.Sprintf("%s.loans contains unknown loan: %s", humanID, loanID))
+				continue
+			}
+
+			expectedAmount := loan.OutstandingPrincipal + loan.OutstandingInterest
+			if loan.BorrowerHumanID != humanID || mirroredAmount != expectedAmount {
+				errors = append(errors, fmt.Sprintf(
+					"Customer loan mismatch: %s.loans[%s] = %d, but %s borrower = %s and due = %d",
+					humanID,
+					loanID,
+					mirroredAmount,
+					loanID,
+					loan.BorrowerHumanID,
+					expectedAmount,
+				))
+			}
+		}
+	}
+
+	return errors
+}
+
+func containsString(values []string, searchedValue string) bool {
+	for _, value := range values {
+		if value == searchedValue {
+			return true
+		}
+	}
+
+	return false
 }

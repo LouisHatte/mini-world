@@ -20,6 +20,7 @@ sh scripts/03.assets.sh
 sh scripts/04.reserves.sh
 sh scripts/05.asset-reserves.sh
 sh scripts/06.payments.sh
+sh scripts/07.loans.sh
 ```
 
 ## Commands
@@ -73,6 +74,13 @@ reserve-transfer        Transfer reserves between commercial banks
 internal-transfer       Transfer deposits between two humans inside the same commercial bank
 interbank-payment       Transfer deposits between humans at different banks, settled with reserves
 pay                     High-level payment command, auto-detects internal or interbank payment
+
+# ---------------------------------------- LOANS ----------------------------------------
+
+grant-loan              Bank grants loan and creates deposit, optionally with --collateral asset_id
+accrue-interest         Accrue interest on loans
+repay-loan              Human repays loan
+default-loan            Mark loan as defaulted
 ```
 
 ## TODO
@@ -98,21 +106,7 @@ show-reserves Show reserve balances
 
 show-payments Show payment history
 
-# ---------------------------------------- LOANS ----------------------------------------
-
-grant-loan Bank grants loan and creates deposit
 show-loans Show loans
-accrue-interest Accrue interest on loans
-repay-loan Human repays loan
-default-loan Mark loan as defaulted
-
-# ---------------------------------------- COLLATERAL ----------------------------------------
-
-create-collateral Create collateral owned by a human
-pledge-collateral Attach collateral to a loan
-release-collateral Release collateral after repayment
-seize-collateral Bank seizes collateral after default
-show-collateral Show collateral registry
 
 # ---------------------------------------- SEPA ----------------------------------------
 

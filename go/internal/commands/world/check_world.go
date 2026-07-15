@@ -29,6 +29,7 @@ func runCheckWorld(cmd *cobra.Command, args []string) error {
 		commandlog.Action("World check passed")
 		commandlog.State("Reserve mirrors are consistent.")
 		commandlog.State("Loan mirrors are consistent.")
+		commandlog.State("Customer loan mirrors are consistent.")
 		return nil
 	}
 

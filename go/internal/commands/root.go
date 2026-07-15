@@ -3,6 +3,7 @@ package commands
 import (
 	"mini-world-go/internal/commands/assets"
 	"mini-world-go/internal/commands/cash"
+	"mini-world-go/internal/commands/loans"
 	"mini-world-go/internal/commands/payments"
 	"mini-world-go/internal/commands/reserves"
 	"mini-world-go/internal/commands/setup"
@@ -23,6 +24,7 @@ func newRootCommand() *cobra.Command {
 	rootCmd.AddCommand(assets.Commands()...)
 	rootCmd.AddCommand(reserves.Commands()...)
 	rootCmd.AddCommand(payments.Commands()...)
+	rootCmd.AddCommand(loans.Commands()...)
 
 	return rootCmd
 }

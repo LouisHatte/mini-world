@@ -74,6 +74,18 @@ func (paymentInstruction *PaymentInstruction) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (customerLoan *CustomerLoan) UnmarshalJSON(data []byte) error {
+	type alias CustomerLoan
+
+	defaults := NewCustomerLoan("", "", "", "", 0)
+	if err := json.Unmarshal(data, (*alias)(defaults)); err != nil {
+		return err
+	}
+
+	*customerLoan = *defaults
+	return nil
+}
+
 func (centralBank *CentralBank) UnmarshalJSON(data []byte) error {
 	type alias CentralBank
 
