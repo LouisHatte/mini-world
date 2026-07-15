@@ -19,13 +19,13 @@ type World struct {
 	Messages            map[string]map[string]any      `json:"messages"`
 	Settlements         map[string]map[string]any      `json:"settlements"`
 
-	Step2Systems          map[string]map[string]any `json:"step2_systems"`
-	CorrespondentAccounts map[string]map[string]any `json:"correspondent_accounts"`
-	Bonds                 map[string]map[string]any `json:"bonds"`
-	Cheques               map[string]map[string]any `json:"cheques"`
-	CardAuthorizations    map[string]map[string]any `json:"card_authorizations"`
-	FXMarkets             map[string]*FXMarket      `json:"fx_markets"`
-	Snapshots             map[string]map[string]any `json:"snapshots"`
+	Step2Systems          map[string]map[string]any        `json:"step2_systems"`
+	CorrespondentAccounts map[string]*CorrespondentAccount `json:"correspondent_accounts"`
+	Bonds                 map[string]map[string]any        `json:"bonds"`
+	Cheques               map[string]map[string]any        `json:"cheques"`
+	CardAuthorizations    map[string]map[string]any        `json:"card_authorizations"`
+	FXMarkets             map[string]*FXMarket             `json:"fx_markets"`
+	Snapshots             map[string]map[string]any        `json:"snapshots"`
 
 	CommandHistory []CommandHistoryEntry `json:"command_history"`
 }
@@ -89,6 +89,8 @@ type Bank struct {
 	LoansFromCentralBanks map[string]int `json:"loans_from_central_banks"`
 	CustomerAccounts      []string       `json:"customer_accounts"`
 	CustomerLoans         []string       `json:"customer_loans"`
+	NostroAccounts        []string       `json:"nostro_accounts"`
+	VostroAccounts        []string       `json:"vostro_accounts"`
 	InterestIncome        map[string]int `json:"interest_income"`
 	LoanLossExpense       map[string]int `json:"loan_loss_expense"`
 	Equity                map[string]int `json:"equity"`
@@ -128,12 +130,14 @@ const (
 	PaymentInterbank          PaymentType = "INTERBANK"
 	PaymentSepaCreditTransfer PaymentType = "SEPA_CREDIT_TRANSFER"
 	PaymentSepaInstant        PaymentType = "SEPA_INSTANT"
+	PaymentSwiftMT103         PaymentType = "SWIFT_MT103"
 )
 
 type PaymentStatus string
 
 const (
 	PaymentInitiated        PaymentStatus = "INITIATED"
+	PaymentInstructed       PaymentStatus = "INSTRUCTED"
 	PaymentSettled          PaymentStatus = "SETTLED"
 	PaymentSettlementFailed PaymentStatus = "SETTLEMENT_FAILED"
 	PaymentRejected         PaymentStatus = "REJECTED"
@@ -187,6 +191,22 @@ type FXMarket struct {
 	FromCurrency string  `json:"from_currency"`
 	ToCurrency   string  `json:"to_currency"`
 	Rate         float64 `json:"rate"`
+}
+
+type CorrespondentAccountStatus string
+
+const (
+	CorrespondentAccountActive CorrespondentAccountStatus = "ACTIVE"
+)
+
+type CorrespondentAccount struct {
+	ID                  string                     `json:"id"`
+	OwnerBankID         string                     `json:"owner_bank_id"`
+	CorrespondentBankID string                     `json:"correspondent_bank_id"`
+	Currency            string                     `json:"currency"`
+	NostroBalance       int                        `json:"nostro_balance"`
+	VostroBalance       int                        `json:"vostro_balance"`
+	Status              CorrespondentAccountStatus `json:"status"`
 }
 
 type CommandHistoryEntry struct {

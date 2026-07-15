@@ -21,7 +21,7 @@ func New() *World {
 		Settlements:         map[string]map[string]any{},
 
 		Step2Systems:          map[string]map[string]any{},
-		CorrespondentAccounts: map[string]map[string]any{},
+		CorrespondentAccounts: map[string]*CorrespondentAccount{},
 		Bonds:                 map[string]map[string]any{},
 		Cheques:               map[string]map[string]any{},
 		CardAuthorizations:    map[string]map[string]any{},
@@ -106,6 +106,18 @@ func NewFXMarket(id string, fromCurrency string, toCurrency string, rate float64
 	}
 }
 
+func NewCorrespondentAccount(id string, ownerBankID string, correspondentBankID string, currency string) *CorrespondentAccount {
+	return &CorrespondentAccount{
+		ID:                  id,
+		OwnerBankID:         ownerBankID,
+		CorrespondentBankID: correspondentBankID,
+		Currency:            currency,
+		NostroBalance:       0,
+		VostroBalance:       0,
+		Status:              CorrespondentAccountActive,
+	}
+}
+
 func NewCentralBank(id string, currency string) *CentralBank {
 	return &CentralBank{
 		ID:              id,
@@ -128,6 +140,8 @@ func NewBank(id string) *Bank {
 		LoansFromCentralBanks: map[string]int{},
 		CustomerAccounts:      []string{},
 		CustomerLoans:         []string{},
+		NostroAccounts:        []string{},
+		VostroAccounts:        []string{},
 		InterestIncome:        map[string]int{},
 		LoanLossExpense:       map[string]int{},
 		Equity:                map[string]int{},

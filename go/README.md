@@ -23,6 +23,7 @@ sh scripts/06.payments.sh
 sh scripts/07.loans.sh
 sh scripts/08.sepa.sh
 sh scripts/09.fx.sh
+sh scripts/10.swift.sh
 ```
 
 ## Commands
@@ -97,16 +98,12 @@ set-fx-rate             Set exchange rate between two currencies
 fx-convert-deposit      Human converts bank deposit from one currency to another through a bank
 fx-convert-cash         Human exchanges physical cash from one currency to another through a bank
 fx-bank-trade           Two banks exchange currencies, settled with reserves
-```
 
-## TODO
-
-```sh
 # ---------------------------------------- SWIFT ----------------------------------------
 
-create-correspondent-account Create correspondent account between banks
-swift-mt103 Create SWIFT MT103 payment message
-show-swift-messages Show SWIFT messages
-settle-swift Settle SWIFT payment
-show-correspondents Show correspondent banking links
+open-correspondent-account   Open a correspondent account between two banks
+fund-correspondent-account   Fund a correspondent account using reserves
+swift-mt103                  Create SWIFT customer payment message
+settle-swift                 Settle SWIFT payment through correspondent accounts
+reject-swift                 Reject a non-settled SWIFT payment
 ```

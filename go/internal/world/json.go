@@ -98,6 +98,18 @@ func (fxMarket *FXMarket) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (correspondentAccount *CorrespondentAccount) UnmarshalJSON(data []byte) error {
+	type alias CorrespondentAccount
+
+	defaults := NewCorrespondentAccount("", "", "", "")
+	if err := json.Unmarshal(data, (*alias)(defaults)); err != nil {
+		return err
+	}
+
+	*correspondentAccount = *defaults
+	return nil
+}
+
 func (centralBank *CentralBank) UnmarshalJSON(data []byte) error {
 	type alias CentralBank
 

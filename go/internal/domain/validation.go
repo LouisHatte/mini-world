@@ -11,6 +11,7 @@ func CheckWorld(w *world.World) []string {
 	errors = append(errors, checkReserveMirrors(w)...)
 	errors = append(errors, checkLoanMirrors(w)...)
 	errors = append(errors, checkCustomerLoanMirrors(w)...)
+	errors = append(errors, checkCorrespondentAccountMirrors(w)...)
 	return errors
 }
 
@@ -168,6 +169,54 @@ func checkCustomerLoanMirrors(w *world.World) []string {
 					loan.BorrowerHumanID,
 					expectedAmount,
 				))
+			}
+		}
+	}
+
+	return errors
+}
+
+func checkCorrespondentAccountMirrors(w *world.World) []string {
+	var errors []string
+
+	for correspondentAccountID, correspondentAccount := range w.CorrespondentAccounts {
+		ownerBank, ownerBankExists := w.Banks[correspondentAccount.OwnerBankID]
+		if !ownerBankExists {
+			errors = append(errors, fmt.Sprintf("%s references unknown owner bank: %s", correspondentAccountID, correspondentAccount.OwnerBankID))
+		} else if !containsString(ownerBank.NostroAccounts, correspondentAccountID) {
+			errors = append(errors, fmt.Sprintf("%s.nostro_accounts does not contain %s", correspondentAccount.OwnerBankID, correspondentAccountID))
+		}
+
+		correspondentBank, correspondentBankExists := w.Banks[correspondentAccount.CorrespondentBankID]
+		if !correspondentBankExists {
+			errors = append(errors, fmt.Sprintf("%s references unknown correspondent bank: %s", correspondentAccountID, correspondentAccount.CorrespondentBankID))
+		} else if !containsString(correspondentBank.VostroAccounts, correspondentAccountID) {
+			errors = append(errors, fmt.Sprintf("%s.vostro_accounts does not contain %s", correspondentAccount.CorrespondentBankID, correspondentAccountID))
+		}
+	}
+
+	for bankID, bank := range w.Banks {
+		for _, correspondentAccountID := range bank.NostroAccounts {
+			correspondentAccount, ok := w.CorrespondentAccounts[correspondentAccountID]
+			if !ok {
+				errors = append(errors, fmt.Sprintf("%s.nostro_accounts contains unknown correspondent account: %s", bankID, correspondentAccountID))
+				continue
+			}
+
+			if correspondentAccount.OwnerBankID != bankID {
+				errors = append(errors, fmt.Sprintf("%s.nostro_accounts contains %s, but owner bank is %s", bankID, correspondentAccountID, correspondentAccount.OwnerBankID))
+			}
+		}
+
+		for _, correspondentAccountID := range bank.VostroAccounts {
+			correspondentAccount, ok := w.CorrespondentAccounts[correspondentAccountID]
+			if !ok {
+				errors = append(errors, fmt.Sprintf("%s.vostro_accounts contains unknown correspondent account: %s", bankID, correspondentAccountID))
+				continue
+			}
+
+			if correspondentAccount.CorrespondentBankID != bankID {
+				errors = append(errors, fmt.Sprintf("%s.vostro_accounts contains %s, but correspondent bank is %s", bankID, correspondentAccountID, correspondentAccount.CorrespondentBankID))
 			}
 		}
 	}
