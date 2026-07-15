@@ -17,8 +17,10 @@ import (
 
 func newRootCommand() *cobra.Command {
 	rootCmd := &cobra.Command{
-		Use:   "mini",
-		Short: "A small monetary and banking simulation CLI.",
+		Use:           "mini",
+		Short:         "A small monetary and banking simulation CLI.",
+		SilenceUsage:  true,
+		SilenceErrors: true,
 	}
 
 	rootCmd.AddCommand(worldcmd.Commands()...)

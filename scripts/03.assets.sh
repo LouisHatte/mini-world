@@ -21,3 +21,5 @@ go run ./cmd/mini register-asset bond1 bank1 EUR 750
 go run ./cmd/mini register-asset painting1 bob EUR 500
 go run ./cmd/mini buy-asset-cash alice painting1 450
 go run ./cmd/mini revalue-asset painting1 550
+
+go run ./cmd/mini check-world

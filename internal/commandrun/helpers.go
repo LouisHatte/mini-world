@@ -1,17 +1,9 @@
 package commandrun
 
-import (
-	"fmt"
-
-	"mini-world-go/internal/world"
-)
+import "mini-world-go/internal/world"
 
 func PrintBusinessError(err error) error {
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return nil
+	return err
 }
 
 func SaveWithHistory(w *world.World, command string, args []string) error {
