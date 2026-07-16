@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"sort"
+
 	"mini-world-go/internal/commands/assets"
 	"mini-world-go/internal/commands/cash"
 	"mini-world-go/internal/commands/fx"
@@ -14,6 +16,12 @@ import (
 
 	"github.com/spf13/cobra"
 )
+
+type CommandInfo struct {
+	Name  string `json:"name"`
+	Use   string `json:"use"`
+	Short string `json:"short"`
+}
 
 func newRootCommand() *cobra.Command {
 	rootCmd := &cobra.Command{
@@ -47,4 +55,31 @@ func ExecuteArgs(args []string) error {
 		rootCmd.SetArgs(args)
 	}
 	return rootCmd.Execute()
+}
+
+func ListCommands() []CommandInfo {
+	rootCmd := newRootCommand()
+	infos := make([]CommandInfo, 0, len(rootCmd.Commands()))
+
+	for _, command := range rootCmd.Commands() {
+		if command.Hidden {
+			continue
+		}
+		name := command.Name()
+		if name == "completion" || name == "help" {
+			continue
+		}
+
+		infos = append(infos, CommandInfo{
+			Name:  name,
+			Use:   command.Use,
+			Short: command.Short,
+		})
+	}
+
+	sort.Slice(infos, func(leftIndex, rightIndex int) bool {
+		return infos[leftIndex].Name < infos[rightIndex].Name
+	})
+
+	return infos
 }

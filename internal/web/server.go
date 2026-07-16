@@ -25,6 +25,7 @@ type commandResponse struct {
 func Run(addr string) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /", handleIndex)
+	mux.HandleFunc("GET /api/commands", handleCommands)
 	mux.HandleFunc("GET /api/world", handleWorld)
 	mux.HandleFunc("POST /api/command", handleCommand)
 
@@ -47,6 +48,10 @@ func handleWorld(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeJSON(w, http.StatusOK, currentWorld)
+}
+
+func handleCommands(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, http.StatusOK, commands.ListCommands())
 }
 
 func handleCommand(w http.ResponseWriter, r *http.Request) {
@@ -134,6 +139,9 @@ const indexHTML = `<!doctype html>
       letter-spacing: 0;
     }
     form {
+      position: relative;
+    }
+    .command-row {
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 8px;
@@ -156,6 +164,55 @@ const indexHTML = `<!doctype html>
       border-color: var(--accent);
       color: white;
       cursor: pointer;
+    }
+    .command-palette {
+      position: absolute;
+      top: 44px;
+      left: 0;
+      right: 78px;
+      z-index: 4;
+      display: none;
+      max-height: 320px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 12px 32px rgba(16, 24, 40, 0.14);
+    }
+    .command-palette.visible {
+      display: block;
+    }
+    .command-option {
+      width: 100%;
+      height: auto;
+      display: block;
+      padding: 9px 10px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+    }
+    .command-option:hover,
+    .command-option.active {
+      background: #eef7f5;
+    }
+    .command-option code {
+      display: block;
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .command-option span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
     }
     main {
       display: grid;
@@ -318,8 +375,11 @@ const indexHTML = `<!doctype html>
   <header>
     <h1>mini-world</h1>
     <form id="command-form">
-      <input id="command-input" autocomplete="off" spellcheck="false" placeholder="init, create-bank bank1, deposit-cash alice bank1 EUR 100">
-      <button type="submit">Run</button>
+      <div class="command-row">
+        <input id="command-input" autocomplete="off" spellcheck="false" placeholder="Type a command or search: cash, sepa, loan...">
+        <button type="submit">Run</button>
+      </div>
+      <div id="command-palette" class="command-palette"></div>
     </form>
     <div id="status" class="status">Polling mini_world.json...</div>
   </header>
@@ -355,6 +415,7 @@ const indexHTML = `<!doctype html>
   <script>
     const form = document.querySelector("#command-form");
     const input = document.querySelector("#command-input");
+    const paletteEl = document.querySelector("#command-palette");
     const statusEl = document.querySelector("#status");
     const summaryEl = document.querySelector("#summary");
     const outputEl = document.querySelector("#output");
@@ -363,6 +424,8 @@ const indexHTML = `<!doctype html>
     const worldEl = document.querySelector("#world");
 
     let lastWorldText = "";
+    let commandInfos = [];
+    let activeCommandIndex = -1;
     const openSections = new Set(["central_banks", "banks", "humans", "accounts"]);
     const tableKeys = [
       "central_banks",
@@ -383,6 +446,14 @@ const indexHTML = `<!doctype html>
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
+      if (activeCommandIndex >= 0 && paletteEl.classList.contains("visible")) {
+        const matches = filteredCommands(input.value);
+        if (matches[activeCommandIndex]) {
+          fillCommand(matches[activeCommandIndex]);
+          return;
+        }
+      }
+
       const command = input.value.trim();
       if (!command) return;
 
@@ -397,6 +468,87 @@ const indexHTML = `<!doctype html>
       input.value = "";
       if (result.world) renderWorld(result.world);
     });
+
+    input.addEventListener("input", () => {
+      activeCommandIndex = -1;
+      renderCommandPalette();
+    });
+
+    input.addEventListener("focus", renderCommandPalette);
+
+    input.addEventListener("keydown", (event) => {
+      const matches = filteredCommands(input.value);
+      if (!matches.length) return;
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        activeCommandIndex = Math.min(activeCommandIndex + 1, matches.length - 1);
+        renderCommandPalette();
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        activeCommandIndex = Math.max(activeCommandIndex - 1, 0);
+        renderCommandPalette();
+      }
+      if (event.key === "Tab") {
+        event.preventDefault();
+        fillCommand(matches[Math.max(activeCommandIndex, 0)]);
+      }
+      if (event.key === "Escape") {
+        paletteEl.classList.remove("visible");
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!form.contains(event.target)) {
+        paletteEl.classList.remove("visible");
+      }
+    });
+
+    async function loadCommands() {
+      const response = await fetch("/api/commands", { cache: "no-store" });
+      commandInfos = await response.json();
+      renderCommandPalette();
+    }
+
+    function filteredCommands(query) {
+      const normalizedQuery = query.trim().toLowerCase();
+      if (!normalizedQuery) return commandInfos.slice(0, 8);
+
+      return commandInfos.filter((command) => {
+        return command.name.toLowerCase().includes(normalizedQuery)
+          || command.use.toLowerCase().includes(normalizedQuery)
+          || command.short.toLowerCase().includes(normalizedQuery);
+      }).slice(0, 10);
+    }
+
+    function renderCommandPalette() {
+      const matches = filteredCommands(input.value);
+      if (!document.activeElement || document.activeElement !== input || matches.length === 0) {
+        paletteEl.classList.remove("visible");
+        paletteEl.replaceChildren();
+        return;
+      }
+
+      paletteEl.replaceChildren(...matches.map((command, index) => {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "command-option";
+        if (index === activeCommandIndex) option.classList.add("active");
+        option.innerHTML = "<code>" + escapeHTML(command.use) + "</code><span>" + escapeHTML(command.short || "") + "</span>";
+        option.addEventListener("click", () => fillCommand(command));
+        return option;
+      }));
+      paletteEl.classList.add("visible");
+    }
+
+    function fillCommand(command) {
+      input.value = command.use;
+      activeCommandIndex = -1;
+      paletteEl.classList.remove("visible");
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+    }
 
     async function pollWorld() {
       try {
@@ -564,6 +716,7 @@ const indexHTML = `<!doctype html>
         .replaceAll('"', "&quot;");
     }
 
+    loadCommands();
     pollWorld();
     setInterval(pollWorld, 400);
   </script>
