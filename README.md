@@ -1,12 +1,36 @@
 # mini-world
 
-## Run
+## Run CLI
 
 From this directory:
 
 ```sh
 go run ./cmd/mini --help
 go run ./cmd/mini init
+```
+
+## Run Web UI
+
+Run the local web UI:
+
+```sh
+go run ./cmd/mini-web
+```
+
+Then open:
+
+```sh
+http://localhost:8080
+```
+
+Use `MINI_WEB_ADDR=:18080` if you want another port.
+
+Inside the web UI, type commands without `go run ./cmd/mini`, for example:
+
+```sh
+init
+create-central-bank ecb EUR
+create-bank bank1
 ```
 
 ## Test
@@ -24,6 +48,7 @@ sh scripts/07.loans.sh
 sh scripts/08.sepa.sh
 sh scripts/09.fx.sh
 sh scripts/10.swift.sh
+sh scripts/11.full-scenario.sh
 ```
 
 ## Commands

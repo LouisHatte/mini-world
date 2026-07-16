@@ -38,5 +38,13 @@ func newRootCommand() *cobra.Command {
 }
 
 func Execute() error {
-	return newRootCommand().Execute()
+	return ExecuteArgs(nil)
+}
+
+func ExecuteArgs(args []string) error {
+	rootCmd := newRootCommand()
+	if args != nil {
+		rootCmd.SetArgs(args)
+	}
+	return rootCmd.Execute()
 }

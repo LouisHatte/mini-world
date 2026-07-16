@@ -13,20 +13,13 @@ func New() *World {
 		ReserveLoans: map[string]*ReserveLoan{},
 
 		CustomerLoans: map[string]*CustomerLoan{},
-		Holds:         map[string]map[string]any{},
-		LedgerEntries: []map[string]any{},
 
 		PaymentInstructions: map[string]*PaymentInstruction{},
 		Messages:            map[string]map[string]any{},
 		Settlements:         map[string]map[string]any{},
 
-		Step2Systems:          map[string]map[string]any{},
 		CorrespondentAccounts: map[string]*CorrespondentAccount{},
-		Bonds:                 map[string]map[string]any{},
-		Cheques:               map[string]map[string]any{},
-		CardAuthorizations:    map[string]map[string]any{},
 		FXMarkets:             map[string]*FXMarket{},
-		Snapshots:             map[string]map[string]any{},
 
 		CommandHistory: []CommandHistoryEntry{},
 	}
@@ -90,8 +83,6 @@ func NewCustomerLoan(id string, bankID string, borrowerHumanID string, currency 
 		OutstandingPrincipal: amount,
 		OutstandingInterest:  0,
 		TotalInterestAccrued: 0,
-		WrittenOffPrincipal:  0,
-		WrittenOffInterest:   0,
 		CollateralAssetID:    "",
 		Status:               CustomerLoanActive,
 	}
@@ -127,7 +118,6 @@ func NewCentralBank(id string, currency string) *CentralBank {
 		CashVault:       0,
 		ReserveAccounts: map[string]int{},
 		LoansToBanks:    map[string]int{},
-		Securities:      map[string]int{},
 	}
 }
 
@@ -143,7 +133,6 @@ func NewBank(id string) *Bank {
 		NostroAccounts:        []string{},
 		VostroAccounts:        []string{},
 		InterestIncome:        map[string]int{},
-		LoanLossExpense:       map[string]int{},
 		Equity:                map[string]int{},
 		FXInventory:           map[string]int{},
 	}
@@ -166,7 +155,6 @@ func NewAccount(id string, humanID string, bankID string, currency string) *Acco
 		BankID:        bankID,
 		Currency:      currency,
 		BookedBalance: 0,
-		Holds:         []string{},
 		Status:        AccountActive,
 	}
 }

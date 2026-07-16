@@ -11,21 +11,14 @@ type World struct {
 	Assets       map[string]*Asset       `json:"assets"`
 	ReserveLoans map[string]*ReserveLoan `json:"reserve_loans"`
 
-	CustomerLoans map[string]*CustomerLoan  `json:"customer_loans"`
-	Holds         map[string]map[string]any `json:"holds"`
-	LedgerEntries []map[string]any          `json:"ledger_entries"`
+	CustomerLoans map[string]*CustomerLoan `json:"customer_loans"`
 
 	PaymentInstructions map[string]*PaymentInstruction `json:"payment_instructions"`
 	Messages            map[string]map[string]any      `json:"messages"`
 	Settlements         map[string]map[string]any      `json:"settlements"`
 
-	Step2Systems          map[string]map[string]any        `json:"step2_systems"`
 	CorrespondentAccounts map[string]*CorrespondentAccount `json:"correspondent_accounts"`
-	Bonds                 map[string]map[string]any        `json:"bonds"`
-	Cheques               map[string]map[string]any        `json:"cheques"`
-	CardAuthorizations    map[string]map[string]any        `json:"card_authorizations"`
 	FXMarkets             map[string]*FXMarket             `json:"fx_markets"`
-	Snapshots             map[string]map[string]any        `json:"snapshots"`
 
 	CommandHistory []CommandHistoryEntry `json:"command_history"`
 }
@@ -38,7 +31,6 @@ type CentralBank struct {
 	CashVault       int            `json:"cash_vault"`
 	ReserveAccounts map[string]int `json:"reserve_accounts"`
 	LoansToBanks    map[string]int `json:"loans_to_banks"`
-	Securities      map[string]int `json:"securities"`
 }
 
 type Currency struct{}
@@ -92,7 +84,6 @@ type Bank struct {
 	NostroAccounts        []string       `json:"nostro_accounts"`
 	VostroAccounts        []string       `json:"vostro_accounts"`
 	InterestIncome        map[string]int `json:"interest_income"`
-	LoanLossExpense       map[string]int `json:"loan_loss_expense"`
 	Equity                map[string]int `json:"equity"`
 	FXInventory           map[string]int `json:"fx_inventory"`
 }
@@ -119,7 +110,6 @@ type Account struct {
 	BankID        string        `json:"bank_id"`
 	Currency      string        `json:"currency"`
 	BookedBalance int           `json:"booked_balance"`
-	Holds         []string      `json:"holds"`
 	Status        AccountStatus `json:"status"`
 }
 
@@ -180,8 +170,6 @@ type CustomerLoan struct {
 	OutstandingPrincipal int                `json:"outstanding_principal"`
 	OutstandingInterest  int                `json:"outstanding_interest"`
 	TotalInterestAccrued int                `json:"total_interest_accrued"`
-	WrittenOffPrincipal  int                `json:"written_off_principal"`
-	WrittenOffInterest   int                `json:"written_off_interest"`
 	CollateralAssetID    string             `json:"collateral_asset_id"`
 	Status               CustomerLoanStatus `json:"status"`
 }
